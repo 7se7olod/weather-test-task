@@ -1,0 +1,80 @@
+<app-header ></app-header>
+<section *ngIf="(currentWeather$ | async) as weather" class="w-100 d-flex flex-column align-items-center my-3">
+  <div class="container-fluid w-50 rounded-4 my-3 p-4 bg-primary bg-opacity-25">
+    <h1>{{weather.name}}</h1>
+    <div class="d-flex flex-row justify-content-start align-items-end">
+      <h2 class="fs-1 align-self-center">{{weather.main.temp | roundedTemperature}}</h2>
+      <img style="width: 150px" src="https://openweathermap.org/img/wn/{{weather.weather[0].icon}}@4x.png" alt="{{weather.weather[0].main}}">
+      <div class="d-flex flex-column justify-content-start align-items-start">
+        <p class="fs-3 align-self-center m-0">Сейчас {{weather.weather[0].description}}</p>
+        <p class="fs-6 align-self-center text-secondary text-opacity-50">
+          Ощущается как
+          <span class="text-secondary">{{weather.main.feels_like | roundedTemperature}}</span>
+        </p>
+      </div>
+    </div>
+    <div class="d-flex flex-row gap-3">
+      <div class="d-flex flex-row justify-content-start align-items-center gap-1">
+        <img style="width: 20px" src="/assets/images/humidity-icon.svg" alt="humidity-icon">
+        <span>{{weather.main.humidity}}%</span>
+      </div>
+      <div class="d-flex flex-row justify-content-start align-items-center gap-1">
+        <img style="width: 20px" src="/assets/images/wind-icon.svg" alt="wind-icon">
+        <span>{{weather.wind.speed}} м/с</span>
+      </div>
+      <div class="d-flex flex-row justify-content-start align-items-center gap-1">
+        <img style="width: 20px" src="/assets/images/pressure-icon.svg" alt="pressure-icon">
+        <span>{{weather.main.pressure}} мм рт. ст.</span>
+      </div>
+    </div>
+  </div>
+  <div class="w-50 rounded-4 bg-primary bg-opacity-25 p-3">
+    <table class="table table-striped text-dark" *ngIf="(fiveDaysForecastWeather$ | async) as fiveDaysWeathers">
+      <thead>
+      <tr class="text-center">
+        <th scope="col"></th>
+        <th scope="col"></th>
+        <th scope="col" title="Температура">
+          <img style="width: 20px" src="/assets/images/temperature-icon.svg" alt="temperature-icon">
+        </th>
+        <th scope="col" title="Скорость ветра">
+          <img style="width: 20px" src="/assets/images/wind-icon.svg" alt="wind-icon">
+        </th>
+        <th scope="col" title="Влажность воздуха">
+          <img style="width: 20px" src="/assets/images/humidity-icon.svg" alt="humidity-icon">
+        </th>
+        <th scope="col" title="Атмосферное давление">
+          <img style="width: 20px" src="/assets/images/pressure-icon.svg" alt="pressure-icon">
+        </th>
+      </tr>
+      </thead>
+      <tbody class="align-middle">
+      <tr *ngFor="let value of fiveDaysWeathers; index as i" class="text-center">
+        <td scope="row">
+          {{ (value.dt * 1000) | date : 'EEEE' }}
+          {{(value.dt * 1000) | date : 'dd MMMM'}}
+        </td>
+        <td class="d-flex flex-column justify-content-center align-items-center">
+          <img style="width: 100px" src="https://openweathermap.org/img/wn/{{value.weather[0].icon}}@2x.png" alt="{{value.weather[0].icon}}">
+          <span class="text-secondary">{{value.weather[0].description}}</span>
+        </td>
+        <td>
+          {{ value.main.temp | roundedTemperature }}
+        </td>
+        <td>
+          {{value.wind.speed}} м/с
+        </td>
+        <td>
+          {{value.main.humidity}}%
+        </td>
+        <td>
+          {{value.main.pressure}} мм рт. ст.
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+<app-footer></app-footer>
+
+
