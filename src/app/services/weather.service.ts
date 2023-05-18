@@ -3,6 +3,7 @@ import {HttpClient} from "@angular/common/http";
 import {BehaviorSubject, Observable, tap} from "rxjs";
 import {ResponseWeatherType} from "../types/response-weather.type";
 import {List, Response5DaysForecastType} from "../types/response-five-days-forecast-weather.type";
+import {environment} from "../../environments/environment";
 
 export type CoordinateCityType = {
   latitude: number,
@@ -13,22 +14,18 @@ export type CoordinateCityType = {
   providedIn: 'root'
 })
 export class WeatherService {
-  private readonly constants = {
-    urlCurrentForecast: 'https://api.openweathermap.org/data/2.5/weather?',
-    urlFiveDaysForecast: 'https://api.openweathermap.org/data/2.5/forecast?',
-    apiId: '347f869ad56cdd4181acc109b1c836d3',
-  }
   public currentWeather$ = new BehaviorSubject<ResponseWeatherType | null>(null);
   public fiveDaysForecastWeather$ = new BehaviorSubject<List[] | null>(null);
 
   constructor(private http: HttpClient) {
+
   }
 
-  public getCurrentWeather(city?: string, coordinate?: CoordinateCityType): Observable<ResponseWeatherType> {
+  public getCurrentWeather(city?: string, latitude?: number, longitude?: number): Observable<ResponseWeatherType> {
     const params = {
       lang: 'ru',
       units: 'metric',
-      appid: this.constants.apiId,
+      appid: environment.API_KEY,
       q: '',
       lon: 0,
       lat: 0
@@ -36,15 +33,15 @@ export class WeatherService {
     if (city) {
       params.q = city;
     }
-    if (coordinate) {
-      params.lon = coordinate.longitude;
-      params.lat = coordinate.latitude;
+    if (latitude && longitude) {
+      params.lon = longitude;
+      params.lat = latitude;
     }
-    if (!city && !coordinate) {
+    if (!city && !latitude && !longitude) {
       params.q = 'Moscow';
     }
 
-    return this.http.get<ResponseWeatherType>(this.constants.urlCurrentForecast, {params})
+    return this.http.get<ResponseWeatherType>(environment.API_URL_CURRENT_WEATHER, {params})
       .pipe(
         tap((result: ResponseWeatherType) => {
           if (result) {
@@ -54,11 +51,11 @@ export class WeatherService {
       );
   }
 
-  public getFiveDayWeatherForecast(city?: string, coordinate?: CoordinateCityType): Observable<Response5DaysForecastType> {
+  public getFiveDayWeatherForecast(city?: string, latitude?: number, longitude?: number): Observable<Response5DaysForecastType> {
     const params = {
       lang: 'ru',
       units: 'metric',
-      appid: this.constants.apiId,
+      appid: environment.API_KEY,
       q: '',
       lon: 0,
       lat: 0
@@ -68,16 +65,15 @@ export class WeatherService {
       params.q = city;
     }
 
-    if (coordinate) {
-      params.lon = coordinate.longitude;
-      params.lat = coordinate.latitude;
+    if (latitude && longitude) {
+      params.lon = longitude;
+      params.lat = latitude;
     }
-
-    if (!city && !coordinate) {
+    if (!city && !latitude && !longitude) {
       params.q = 'Moscow';
     }
 
-    return this.http.get<Response5DaysForecastType>(this.constants.urlFiveDaysForecast, {params})
+    return this.http.get<Response5DaysForecastType>(environment.API_URL_FIVE_DAYS, {params})
       .pipe(
         tap(weatherForecast => {
           // фильтрую список
