@@ -1,0 +1,59 @@
+<div class="w-100 my-3 p-4 p2 d-flex flex-column justify-content-center align-items-center">
+  <div class="w-50 w-auto rounded-4 p-4 bg-primary bg-opacity-25">
+    <table class="w-auto table table-striped text-dark">
+      <thead class="w-50">
+      <tr class="text-center">
+        <th scope="col"></th>
+        <th scope="col"></th>
+        <th scope="col" title="Температура">
+          <img style="width: 20px" src="./assets/images/temperature-icon.svg" alt="temperature-icon">
+        </th>
+        <th scope="col" title="Скорость ветра">
+          <img style="width: 20px" src="./assets/images/wind-icon.svg" alt="wind-icon">
+        </th>
+        <th scope="col" title="Влажность воздуха">
+          <img style="width: 20px" src="./assets/images/humidity-icon.svg" alt="humidity-icon">
+        </th>
+        <th scope="col" title="Атмосферное давление">
+          <img style="width: 20px" src="./assets/images/pressure-icon.svg" alt="pressure-icon">
+        </th>
+      </tr>
+      </thead>
+      <tbody class="align-middle  w-auto">
+      <tr *ngFor="let weatherItem of fiveDayForecastWeather" class="text-center ">
+        <td style="max-width: 80px;">
+          <div class="d-flex flex-column justify-content-start align-items-center">
+            <span>{{ (weatherItem.dt * 1000) | date : 'dd MMMM' }}</span>
+            <span>{{ (weatherItem.dt * 1000) | date : 'EE' }}</span>
+          </div>
+        </td>
+        <td style="max-width: 80px" class="d-flex flex-column justify-content-center align-items-center">
+          <img class="w-auto mh-100" src="https://openweathermap.org/img/wn/{{weatherItem.weather[0].icon}}@2x.png"
+               alt="{{weatherItem.weather[0].icon}}">
+          <span class="weather-description-text text-secondary">{{weatherItem.weather[0].description}}</span>
+        </td>
+        <td>
+          {{ weatherItem.main.temp | roundedTemperature }}
+        </td>
+        <td>
+          {{weatherItem.wind.speed}} м/с
+        </td>
+        <td>
+          {{weatherItem.main.humidity}}%
+        </td>
+        <td>
+          {{weatherItem.main.pressure}} мм рт. ст.
+        </td>
+      </tr>
+      </tbody>
+    </table>
+    <div class="text-center w-100 w-auto">
+      <apx-chart
+        [series]="chartSeriesOptions.series"
+        [chart]="chartSeriesOptions.chart"
+        [xaxis]="chartSeriesOptions.xaxis"
+        [title]="chartSeriesOptions.title"
+      ></apx-chart>
+    </div>
+  </div>
+</div>

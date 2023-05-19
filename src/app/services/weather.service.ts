@@ -1,14 +1,11 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
-import {BehaviorSubject, Observable, tap} from "rxjs";
+import {HttpClient, HttpErrorResponse} from "@angular/common/http";
+import {BehaviorSubject, catchError, Observable, of, tap} from "rxjs";
 import {ResponseWeatherType} from "../types/response-weather.type";
 import {List, Response5DaysForecastType} from "../types/response-five-days-forecast-weather.type";
 import {environment} from "../../environments/environment";
-
-export type CoordinateCityType = {
-  latitude: number,
-  longitude: number
-}
+import {ModalComponent} from "../components/modal/modal.component";
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 
 @Injectable({
   providedIn: 'root'
@@ -16,8 +13,10 @@ export type CoordinateCityType = {
 export class WeatherService {
   public currentWeather$ = new BehaviorSubject<ResponseWeatherType | null>(null);
   public fiveDaysForecastWeather$ = new BehaviorSubject<List[] | null>(null);
+  public isCollapsed$ = new BehaviorSubject<boolean>(true);
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient,
+              private modalService: NgbModal) {
 
   }
 
@@ -47,6 +46,22 @@ export class WeatherService {
           if (result) {
             this.currentWeather$.next(result);
           }
+        }),
+        catchError( error => {
+          switch (true) {
+            case (error.status === 0):
+              this.modalService.open(ModalComponent);
+              throw error.message;
+              break;
+            case (error.status === 404):
+              this.isCollapsed$.next(false)
+              throw error.message;
+              break;
+            case (error.status >= 500 && error.status <= 526):
+              this.modalService.open(ModalComponent);
+              break;
+          }
+          throw error;
         })
       );
   }
@@ -76,10 +91,21 @@ export class WeatherService {
     return this.http.get<Response5DaysForecastType>(environment.API_URL_FIVE_DAYS, {params})
       .pipe(
         tap(weatherForecast => {
-          // фильтрую список
           this.fiveDaysForecastWeather$
             .next(weatherForecast.list
-              .filter((weather: List) => new Date(weather.dt * 1000).getHours() === 13))
+              .filter((weather: List) => new Date(weather.dt * 1000).getHours() > 12 && new Date(weather.dt * 1000).getHours() < 16))
+        }),
+        catchError( error => {
+          switch (true) {
+            case (error.status === 404):
+              this.isCollapsed$.next(false)
+              throw error.message;
+              break;
+            case (error.status >= 500 && error.status <= 526):
+              throw error.message;
+              break;
+          }
+          throw error;
         })
       );
   }

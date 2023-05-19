@@ -1,1 +1,8 @@
-<app-home></app-home>
+<app-header (weatherCity)="searchCityWeather($event)"></app-header>
+<app-main-widget [currentWeather]="currentWeather$ | async"></app-main-widget>
+<app-five-day-forecast-widget
+  *ngIf="chartSeriesOptions$ | async as options"
+  [fiveDayForecastWeather]="fiveDaysForecastWeather$ | async"
+  [chartSeriesOptions]="options">
+</app-five-day-forecast-widget>
+<app-footer></app-footer>

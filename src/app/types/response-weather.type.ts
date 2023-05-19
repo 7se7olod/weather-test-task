@@ -9,6 +9,7 @@ export type ResponseWeatherType = {
   id:         number;
   name:       string;
   cod:        number;
+  dt: number;
 }
 
 export type Main = {
