@@ -6,7 +6,7 @@
         <div class="position-relative w-50">
           <input class="form-input rounded-3 w-100 border-0 h-100 p-2" type="text" placeholder="Город" #cityInputElement>
           <div class="position-absolute bottom-0 top-100 w-100">
-            <div #collapse="ngbCollapse" [(ngbCollapse)]="isCollapsed" [horizontal]="false">
+            <div #collapse="ngbCollapse" [(ngbCollapse)]="!isError" [horizontal]="false">
               <div class="card position-relative">
                 <button type="button" class="btn-close align-self-end p-2 position-absolute" (click)="collapse.toggle()"></button>
                 <div class="card-body text-danger fs-6 text-center">Город не найден!</div>

@@ -1,4 +1,4 @@
-<app-header (weatherCity)="searchCityWeather($event)"></app-header>
+<app-header (weatherCity)="searchCityWeather($event)" [isError]="isError$ | async"></app-header>
 <app-main-widget [currentWeather]="currentWeather$ | async"></app-main-widget>
 <app-five-day-forecast-widget
   *ngIf="chartSeriesOptions$ | async as options"

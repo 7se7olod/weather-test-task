@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {WeatherService} from "./services/weather.service";
-import {catchError, map, Observable} from "rxjs";
+import {BehaviorSubject, catchError, map, Observable, of} from "rxjs";
 import {ChartOptions} from "./types/chart-options.type";
 
 @Component({
@@ -11,6 +11,7 @@ import {ChartOptions} from "./types/chart-options.type";
 export class AppComponent implements OnInit {
   public currentWeather$ = this.weatherService.currentWeather$;
   public fiveDaysForecastWeather$ = this.weatherService.fiveDaysForecastWeather$;
+  public isError$ = new BehaviorSubject<boolean>(false);
   public chartSeriesOptions$: Observable<ChartOptions> = this.weatherService.fiveDaysForecastWeather$.pipe(map((weatherList) => {
     return {
       series: [
@@ -53,7 +54,11 @@ export class AppComponent implements OnInit {
       this.weatherService.getCurrentWeather(city).subscribe();
       this.weatherService.getFiveDayWeatherForecast(city).pipe(
         catchError(error => {
-          return error.message;
+          this.isError$.next(true);
+            setTimeout(() => {
+              this.isError$.next(false);
+            }, 3000)
+          return of(null);
         })
       ).subscribe();
     }
