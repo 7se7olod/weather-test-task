@@ -9,8 +9,5 @@ export class HeaderComponent {
   @Output() weatherCity = new EventEmitter<string>();
   searchCity(city: string) {
     this.weatherCity.emit(city);
-    setTimeout(() => {
-      this.isCollapsed = true;
-    }, 3000)
   }
 }
