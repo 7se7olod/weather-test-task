@@ -53,14 +53,9 @@ export class AppComponent implements OnInit {
       this.weatherService.getCurrentWeather(city).subscribe();
       this.weatherService.getFiveDayWeatherForecast(city).pipe(
         catchError(error => {
-          // this.isCollapsed = false;
           return error.message;
         })
       ).subscribe();
     }
-
-    setTimeout(() => {
-      // this.isCollapsed = true;
-    }, 3000)
   }
 }
