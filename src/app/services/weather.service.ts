@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpErrorResponse} from "@angular/common/http";
-import {BehaviorSubject, catchError, Observable, of, tap} from "rxjs";
+import {HttpClient} from "@angular/common/http";
+import {BehaviorSubject, catchError, Observable, switchMap, tap} from "rxjs";
 import {ResponseWeatherType} from "../types/response-weather.type";
 import {List, Response5DaysForecastType} from "../types/response-five-days-forecast-weather.type";
 import {environment} from "../../environments/environment";
@@ -14,10 +14,20 @@ export class WeatherService {
   public currentWeather$ = new BehaviorSubject<ResponseWeatherType | null>(null);
   public fiveDaysForecastWeather$ = new BehaviorSubject<List[] | null>(null);
   public isCollapsed$ = new BehaviorSubject<boolean>(true);
+  private city$ = new BehaviorSubject<string>('');
 
   constructor(private http: HttpClient,
-              private modalService: NgbModal) {
+              private modalService: NgbModal) {}
 
+  public getCityFromIp(): Observable<{ city: string }> {
+    return this.http.get<{ ip: string }>('https://api.ipify.org/?format=json').pipe(
+      switchMap((response) =>
+        this.http.get<{ city: string }>(`https://ipapi.co/${response.ip}/json/`)
+      ),
+      tap((response) => {
+        this.city$.next(response.city);
+      })
+    )
   }
 
   public getCurrentWeather(city?: string, latitude?: number, longitude?: number): Observable<ResponseWeatherType> {
@@ -25,7 +35,7 @@ export class WeatherService {
       lang: 'ru',
       units: 'metric',
       appid: environment.API_KEY,
-      q: '',
+      q: this.city$.getValue(),
       lon: 0,
       lat: 0
     }
@@ -37,7 +47,7 @@ export class WeatherService {
       params.lat = latitude;
     }
     if (!city && !latitude && !longitude) {
-      params.q = 'Moscow';
+      params.q = this.city$.getValue();
     }
 
     return this.http.get<ResponseWeatherType>(environment.API_URL_CURRENT_WEATHER, {params})
@@ -71,7 +81,7 @@ export class WeatherService {
       lang: 'ru',
       units: 'metric',
       appid: environment.API_KEY,
-      q: '',
+      q: this.city$.getValue(),
       lon: 0,
       lat: 0
     }
@@ -85,7 +95,7 @@ export class WeatherService {
       params.lat = latitude;
     }
     if (!city && !latitude && !longitude) {
-      params.q = 'Moscow';
+      params.q = this.city$.getValue();
     }
 
     return this.http.get<Response5DaysForecastType>(environment.API_URL_FIVE_DAYS, {params})
@@ -95,7 +105,7 @@ export class WeatherService {
             .next(weatherForecast.list
               .filter((weather: List) => new Date(weather.dt * 1000).getHours() > 12 && new Date(weather.dt * 1000).getHours() < 16))
         }),
-        catchError( error => {
+        catchError(error => {
           switch (true) {
             case (error.status === 404):
               this.isCollapsed$.next(false)

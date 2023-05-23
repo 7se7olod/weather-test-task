@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {WeatherService} from "./services/weather.service";
-import {BehaviorSubject, catchError, map, Observable, of} from "rxjs";
+import {BehaviorSubject, catchError, map, Observable, of, tap} from "rxjs";
 import {ChartOptions} from "./types/chart-options.type";
 
 @Component({
@@ -16,8 +16,8 @@ export class AppComponent implements OnInit {
     return {
       series: [
         {
-          name: "My-series",
-          data: (weatherList || []).map(weatherItem => weatherItem.main.temp),
+          name: "Температура ºC",
+          data: (weatherList || []).map(weatherItem => Math.round(weatherItem.main.temp)),
         }
       ],
       chart: {
@@ -28,8 +28,11 @@ export class AppComponent implements OnInit {
         text: "График погоды"
       },
       xaxis: {
-        categories: (weatherList || []).map(weatherItem => new Date(weatherItem.dt * 1000).getDate())
-      },
+        categories: (weatherList || []).map(weatherItem => `${new Date(weatherItem.dt * 1000).toLocaleString('ru-RU', {
+          day: 'numeric',
+          month: 'long'
+        })}`)
+      }
     }
   }));
 
@@ -43,8 +46,11 @@ export class AppComponent implements OnInit {
         this.weatherService.getFiveDayWeatherForecast('', position.coords.latitude, position.coords.longitude).subscribe();
       }
     }, (error: GeolocationPositionError) => {
-      this.weatherService.getCurrentWeather('Moscow').subscribe();
-      this.weatherService.getFiveDayWeatherForecast('Moscow').subscribe();
+      this.weatherService.getCityFromIp().pipe(
+      tap(ip => {
+          this.weatherService.getCurrentWeather().subscribe();
+          this.weatherService.getFiveDayWeatherForecast().subscribe();
+      })).subscribe();
       throw error.message;
     });
   }
@@ -55,9 +61,9 @@ export class AppComponent implements OnInit {
       this.weatherService.getFiveDayWeatherForecast(city).pipe(
         catchError(error => {
           this.isError$.next(true);
-            setTimeout(() => {
-              this.isError$.next(false);
-            }, 3000)
+          setTimeout(() => {
+            this.isError$.next(false);
+          }, 3000)
           return of(null);
         })
       ).subscribe();

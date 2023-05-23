@@ -1,7 +1,8 @@
 <section class="w-100 w-auto d-flex flex-column align-items-center my-3 p-2">
-  <div class="rounded-4 my-3 p-4 bg-primary bg-opacity-25">
+  <div *ngIf="!currentWeather" class="spinner-border text-primary" role="status"></div>
+  <div class="rounded-4 my-3 p-4 bg-primary bg-opacity-25" *ngIf="currentWeather">
     <h1>{{currentWeather?.name}}</h1>
-    <h4 class="text-secondary">Сегодня {{currentWeather?.dt | date : 'EEEE'}}</h4>
+    <h4 class="text-secondary">Сегодня {{(currentWeather?.dt * 1000) | date : 'EEEE, d MMMM' }}</h4>
     <div class="d-flex flex-row justify-content-start align-items-center">
       <h2 class="fs-1 align-self-center">{{currentWeather?.main.temp | roundedTemperature}}</h2>
       <img style="width: 150px" src="https://openweathermap.org/img/wn/{{currentWeather?.weather[0].icon}}@4x.png"
@@ -30,7 +31,5 @@
     </div>
   </div>
 </section>
-
-
 
 

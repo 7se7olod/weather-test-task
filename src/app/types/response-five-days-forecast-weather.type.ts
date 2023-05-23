@@ -10,7 +10,6 @@ export type List = {
   weather:    Weather[];
   wind:       Wind;
   visibility: number;
-  pop:        number;
   dt_txt:     Date;
 }
 

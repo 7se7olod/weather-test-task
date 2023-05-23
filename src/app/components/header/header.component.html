@@ -2,9 +2,9 @@
   <div class="w-50 w-auto container-fluid d-flex flex-row align-items-center justify-content-between">
     <h2 class="w-50 text-white">Прогноз погоды</h2>
     <div class="d-flex flex-row gap-3 rounded-3 w-75 justify-content-end">
-      <form class="d-flex flex-row gap-2 w-100 justify-content-end" (submit)="$event.preventDefault()">
+      <form [formGroup]="cityForm" class="d-flex flex-row gap-2 w-100 justify-content-end">
         <div class="position-relative w-50">
-          <input class="form-input rounded-3 w-100 border-0 h-100 p-2" type="text" placeholder="Город" #cityInputElement>
+          <input formControlName="city" class="form-input rounded-3 w-100 border-0 h-100 p-2" type="text" placeholder="Город" (keyup.enter)="searchCity(cityInputElement.value)" #cityInputElement>
           <div class="position-absolute bottom-0 top-100 w-100">
             <div #collapse="ngbCollapse" [(ngbCollapse)]="!isError" [horizontal]="false">
               <div class="card position-relative">
