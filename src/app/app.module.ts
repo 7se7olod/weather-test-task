@@ -32,7 +32,7 @@ registerLocaleData(localeRu, "ru");
     NgbModule,
     ReactiveFormsModule,
     NgbCollapseModule,
-    NgApexchartsModule
+    NgApexchartsModule,
   ],
   providers: [
     { provide: LOCALE_ID, useValue: 'ru' },

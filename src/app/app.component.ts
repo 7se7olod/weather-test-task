@@ -47,15 +47,14 @@ export class AppComponent implements OnInit {
       }
     }, (error: GeolocationPositionError) => {
       this.weatherService.getCityFromIp().pipe(
-      tap(ip => {
+        tap(ip => {
           this.weatherService.getCurrentWeather().subscribe();
           this.weatherService.getFiveDayWeatherForecast().subscribe();
-      })).subscribe();
-      throw error.message;
+        })).subscribe();
     });
   }
 
-  public searchCityWeather(city: string) {
+  public searchCityWeather(city: string): void {
     if (city) {
       this.weatherService.getCurrentWeather(city).subscribe();
       this.weatherService.getFiveDayWeatherForecast(city).pipe(

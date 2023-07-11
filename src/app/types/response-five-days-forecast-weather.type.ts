@@ -1,32 +1,32 @@
 export type Response5DaysForecastType = {
-  cod:     string;
+  cod: string;
   message: number;
-  list:    List[];
+  list: List[];
 }
 
 export type List = {
-  dt:         number;
-  main:       MainClass;
-  weather:    Weather[];
-  wind:       Wind;
+  dt: number;
+  main: MainClass;
+  weather: Weather[];
+  wind: Wind;
   visibility: number;
-  dt_txt:     Date;
+  dt_txt: Date;
 }
 
 export type MainClass = {
-  temp:       number;
+  temp: number;
   humidity: number;
   pressure: number;
 }
 
 export type Weather = {
-  id:          number;
+  id: number;
   description: string;
-  icon:        string;
+  icon: string;
 }
 
 export type Wind = {
   speed: number;
-  deg:   number;
-  gust:  number;
+  deg: number;
+  gust: number;
 }

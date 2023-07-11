@@ -15,7 +15,7 @@ export class HeaderComponent {
   constructor(private fb: FormBuilder) {
   }
 
-  searchCity(city: string) {
+  public searchCity(city: string): void {
     if (city.trim()) {
       if (this.cityForm.valid) {
         this.weatherCity.emit(city);

@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {BehaviorSubject, catchError, Observable, switchMap, tap} from "rxjs";
 import {ResponseWeatherType} from "../types/response-weather.type";
 import {List, Response5DaysForecastType} from "../types/response-five-days-forecast-weather.type";
@@ -57,19 +57,16 @@ export class WeatherService {
             this.currentWeather$.next(result);
           }
         }),
-        catchError( error => {
-          switch (true) {
-            case (error.status === 0):
-              this.modalService.open(ModalComponent);
-              throw error.message;
-              break;
-            case (error.status === 404):
-              this.isCollapsed$.next(false)
-              throw error.message;
-              break;
-            case (error.status >= 500 && error.status <= 526):
-              this.modalService.open(ModalComponent);
-              break;
+        catchError( (error: HttpErrorResponse) => {
+          if (error.status) {
+            switch (true) {
+              case (error.status === 404):
+                this.isCollapsed$.next(false);
+                break;
+              case (error.status >= 500 && error.status <= 526):
+                this.modalService.open(ModalComponent);
+                break;
+            }
           }
           throw error;
         })
@@ -103,16 +100,19 @@ export class WeatherService {
         tap(weatherForecast => {
           this.fiveDaysForecastWeather$
             .next(weatherForecast.list
-              .filter((weather: List) => new Date(weather.dt * 1000).getHours() > 12 && new Date(weather.dt * 1000).getHours() < 16))
+              .filter((weather: List) => new Date(weather.dt * 1000).getHours() > 12 && new Date(weather.dt * 1000).getHours() < 16)
+            )
         }),
         catchError(error => {
           switch (true) {
+            case (error.status === 0):
+              this.modalService.open(ModalComponent);
+              break;
             case (error.status === 404):
               this.isCollapsed$.next(false)
-              throw error.message;
               break;
             case (error.status >= 500 && error.status <= 526):
-              throw error.message;
+              this.modalService.open(ModalComponent);
               break;
           }
           throw error;

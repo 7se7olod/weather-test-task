@@ -4,7 +4,10 @@
     <div class="d-flex flex-row gap-3 rounded-3 w-75 justify-content-end">
       <form [formGroup]="cityForm" class="d-flex flex-row gap-2 w-100 justify-content-end">
         <div class="position-relative w-50">
-          <input formControlName="city" class="form-input rounded-3 w-100 border-0 h-100 p-2" type="text" placeholder="Город" (keyup.enter)="searchCity(cityInputElement.value)" #cityInputElement>
+          <input formControlName="city"
+                 class="form-input rounded-3 w-100 border-0 h-100 p-2"
+                 type="text"
+                 placeholder="Город" (keyup.enter)="searchCity(cityInputElement.value)" #cityInputElement>
           <div class="position-absolute bottom-0 top-100 w-100">
             <div #collapse="ngbCollapse" [(ngbCollapse)]="!isError" [horizontal]="false">
               <div class="card position-relative">
@@ -14,7 +17,7 @@
             </div>
           </div>
         </div>
-        <button class="btn btn-primary" type="button" (click)="searchCity(cityInputElement.value)">
+        <button class="form-button btn btn-primary" type="button" (click)="searchCity(cityInputElement.value)">
           Найти
         </button>
       </form>
