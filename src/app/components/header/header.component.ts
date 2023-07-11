@@ -1,9 +1,10 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
 import {FormBuilder, Validators} from "@angular/forms";
 
 @Component({
   selector: 'app-header',
   templateUrl: 'header.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderComponent {
   @Output() weatherCity = new EventEmitter<string>();
