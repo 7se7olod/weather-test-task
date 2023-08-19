@@ -1,27 +1,42 @@
-# WeatherTestTask
+# Погода
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.0.1.
+## Описание
 
-## Development server
+Это простое приложение погодной панели, разработанное с использованием Angular. Приложение предоставляет прогноз погоды для текущего местоположения пользователя и позволяет искать прогноз погоды для других мест. Оно также отображает 5-дневный прогноз, включая данные о температуре, влажности, скорости ветра и погодных условиях.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## Возможности
 
-## Code scaffolding
+- **Погода текущего местоположения пользователя**: Приложение автоматически определяет местоположение пользователя по IP-адресу и отображает текущий прогноз погоды.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+- **Функциональность поиска**: Пользователи могут искать прогноз погоды для других городов, вводя их название.
 
-## Build
+- **Прогноз погоды**: Для выбранных мест отображается 5-дневный прогноз с датой, погодными условиями и температурой. Представление включает табличное представление данных и диаграмму.
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+- **Отзывчивый дизайн**: Приложение разработано с учетом отзывчивого дизайна и работает на различных устройствах.
 
-## Running unit tests
+## Используемые технологии
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+- Angular: Версия 15, использованная для разработки приложения.
+- TypeScript: Язык программирования для разработки Angular-приложения.
+- [OpenWeather API](https://openweathermap.org/api/one-call-3): Используется для получения данных о погоде.
 
-## Running end-to-end tests
+## Установка и запуск
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+1. Клонируйте репозиторий: `git clone https://github.com/your-username/your-weather-app.git`
+2. Перейдите в каталог проекта: `cd your-weather-app`
+3. Установите зависимости: `npm install`
+4. Запустите приложение: `ng serve`
+5. Откройте браузер и перейдите по адресу `http://localhost:4200/`
 
-## Further help
+## Примеры использования
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+- Приложение автоматически отображает прогноз погоды для вашего текущего местоположения при первом запуске.
+- Используйте поиск для получения прогноза погоды для других городов.
+
+## Вклад
+
+Вы можете внести свой вклад в развитие этого проекта, открыв Issues и Pull Requests.
+
+---
+
+Автор: Пушин Всеволод
