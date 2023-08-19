@@ -7,6 +7,7 @@ export type ResponseWeatherType = {
   name:       string;
   cod:        number;
   dt: number;
+  timezone: number;
 }
 
 export type Main = {

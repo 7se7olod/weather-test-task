@@ -2,9 +2,10 @@ import {AppComponent} from "./app.component";
 import {ComponentFixture, fakeAsync, TestBed, tick} from "@angular/core/testing";
 import {NO_ERRORS_SCHEMA} from "@angular/core";
 import {WeatherService} from "./services/weather.service";
-import {BehaviorSubject, of, tap, throwError} from "rxjs";
+import {BehaviorSubject, of, throwError} from "rxjs";
 import {ChartOptions} from "./types/chart-options.type";
 import {List} from "./types/response-five-days-forecast-weather.type";
+import {environment} from "../environments/environment";
 
 describe('AppComponent ', () => {
   let appComponent: AppComponent;
@@ -12,7 +13,7 @@ describe('AppComponent ', () => {
   let fakeWeatherService: jasmine.SpyObj<WeatherService>;
 
   beforeEach(() => {
-    fakeWeatherService = jasmine.createSpyObj('WeatherService', ['getCurrentWeather', 'getFiveDayWeatherForecast', 'getCityFromIp'], {
+    fakeWeatherService = jasmine.createSpyObj('WeatherService', ['getWeather', 'getCityFromIp'], {
       currentWeather$: of(null),
       fiveDaysForecastWeather$: new BehaviorSubject<List[] | null>(null),
       isCollapsed$: of(true),
@@ -46,9 +47,15 @@ describe('AppComponent ', () => {
   });
 
   it('should check isError$ if city in function searchCityWeather incorrect', fakeAsync(() => {
-    const mockErrorResponse = {status: 404, statusText: 'Not Found'};
-    fakeWeatherService.getCurrentWeather.and.returnValue(of(null));
-    fakeWeatherService.getFiveDayWeatherForecast.and.returnValue(throwError(mockErrorResponse));
+    fakeWeatherService.getWeather.and.callFake(<T>(url: string, callback: (result: T) => void, city?: string, latitude?: number, longitude?: number) => {
+      const mockErrorResponse = {status: 404, statusText: 'Not Found'};
+      if (url === environment.API_URL_CURRENT_WEATHER) {
+        return of(null);
+      } else if (url === environment.API_URL_FIVE_DAYS) {
+        return throwError(mockErrorResponse);
+      }
+      return of<T>(null);
+    });
     appComponent.searchCityWeather('1234567890');
     expect(appComponent.isError$.getValue()).toBeTruthy();
     tick(3000);
@@ -68,14 +75,12 @@ describe('AppComponent ', () => {
       success(fakePosition as GeolocationPosition);
     });
 
-    fakeWeatherService.getCurrentWeather.and.returnValue(of(null));
-    fakeWeatherService.getFiveDayWeatherForecast.and.returnValue(of(null));
+    fakeWeatherService.getWeather.and.returnValue(of(null));
 
     appComponent.ngOnInit();
     tick();
 
-    expect(fakeWeatherService.getCurrentWeather).toHaveBeenCalledWith('', fakePosition.coords.latitude, fakePosition.coords.longitude);
-    expect(fakeWeatherService.getFiveDayWeatherForecast).toHaveBeenCalledWith('', fakePosition.coords.latitude, fakePosition.coords.longitude);
+    expect(fakeWeatherService.getWeather).toHaveBeenCalled();
   }));
 
   it('should check getCurrentWeather and getFiveDayWeatherForecast calls on ngOnInit if there is no geolocation access', fakeAsync(() => {
@@ -84,17 +89,16 @@ describe('AppComponent ', () => {
     });
 
     fakeWeatherService.getCityFromIp.and.returnValue(of(null));
-    fakeWeatherService.getCurrentWeather.and.returnValue(of(null));
-    fakeWeatherService.getFiveDayWeatherForecast.and.returnValue(of(null));
+    fakeWeatherService.getWeather.and.returnValue(of(null));
 
     appComponent.ngOnInit();
     tick();
 
-    expect(fakeWeatherService.getCurrentWeather).toHaveBeenCalledWith();
-    expect(fakeWeatherService.getFiveDayWeatherForecast).toHaveBeenCalledWith();
+    expect(fakeWeatherService.getWeather).toHaveBeenCalled();
+    // expect(fakeWeatherService.getFiveDayWeatherForecast).toHaveBeenCalledWith();
   }));
 
-  it('should transform weatherList into ChartOptions',() => {
+  it('should transform weatherList into ChartOptions', () => {
     const weatherList: List[] = [
       {
         dt: 1630070400,

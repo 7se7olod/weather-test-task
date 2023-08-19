@@ -2,6 +2,7 @@ import {ChangeDetectionStrategy, Component, Input, ViewChild} from '@angular/cor
 import {List} from "../../types/response-five-days-forecast-weather.type";
 import {ChartComponent} from "ng-apexcharts";
 import {ChartOptions} from "../../types/chart-options.type";
+import {StyleForTime} from "../../services/time-color.service";
 
 @Component({
   selector: 'app-five-day-forecast-widget',
@@ -13,4 +14,5 @@ export class FiveDayForecastWidgetComponent {
   @ViewChild("chart") chart: ChartComponent;
   @Input() fiveDayForecastWeather: List[];
   @Input() chartSeriesOptions: ChartOptions;
+  @Input() styleForTime: StyleForTime;
 }

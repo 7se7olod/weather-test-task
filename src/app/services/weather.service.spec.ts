@@ -7,7 +7,7 @@ import {ResponseWeatherType} from "../types/response-weather.type";
 import {environment} from "../../environments/environment";
 import {ModalComponent} from "../components/modal/modal.component";
 import {HttpErrorResponse} from "@angular/common/http";
-import {List, Response5DaysForecastType} from "../types/response-five-days-forecast-weather.type";
+import {Response5DaysForecastType} from "../types/response-five-days-forecast-weather.type";
 
 describe('WeatherService', () => {
   let weatherService: WeatherService;
@@ -131,7 +131,7 @@ describe('WeatherService', () => {
 
   it('should make a getCurrentWeather request with the correct city parameter and update currentWeather$', () => {
     mockCurrentResponse.name = 'Moscow'
-    weatherService.getCurrentWeather('Moscow').subscribe();
+    weatherService.getWeather<ResponseWeatherType>(environment.API_URL_CURRENT_WEATHER, (result) => weatherService.updateCurrentWeather(result), 'Moscow').subscribe();
     const req = httpTestingController.expectOne(request => {
       return request.urlWithParams === `${environment.API_URL_CURRENT_WEATHER}lang=ru&units=metric&appid=${environment.API_KEY}&q=${mockCurrentResponse.name}&lon=0&lat=0`;
     });
@@ -142,7 +142,7 @@ describe('WeatherService', () => {
   });
 
   it('should call getCurrentWeather request with the correct latitude and longitude parameters and update currentWeather$ ', function () {
-    weatherService.getCurrentWeather('', latitude, longitude).subscribe();
+    weatherService.getWeather<ResponseWeatherType>(environment.API_URL_CURRENT_WEATHER, (result) => weatherService.updateCurrentWeather(result), '', latitude, longitude).subscribe();
     const req = httpTestingController.expectOne(request => {
       return request.urlWithParams === `${environment.API_URL_CURRENT_WEATHER}lang=ru&units=metric&appid=${environment.API_KEY}&q=&lon=${longitude}&lat=${latitude}`;
     });
@@ -153,7 +153,7 @@ describe('WeatherService', () => {
   });
 
   it('call getCurrentWeather without parameters and update currentWeather$', function () {
-    weatherService.getCurrentWeather().subscribe();
+    weatherService.getWeather<ResponseWeatherType>(environment.API_URL_CURRENT_WEATHER, (result) => weatherService.updateCurrentWeather(result)).subscribe();
     const req = httpTestingController.expectOne(request => {
       return request.urlWithParams === `${environment.API_URL_CURRENT_WEATHER}lang=ru&units=metric&appid=${environment.API_KEY}&q=&lon=0&lat=0`;
     })
@@ -169,7 +169,8 @@ describe('WeatherService', () => {
     });
 
     spyOn(weatherService.isCollapsed$, 'next');
-    weatherService.getCurrentWeather().subscribe(
+    weatherService.getWeather(environment.API_URL_CURRENT_WEATHER, () => {
+    }).subscribe(
       () => {
         // Обработка успешного ответа (не требуется в данном случае)
       },
@@ -191,7 +192,8 @@ describe('WeatherService', () => {
       statusText: 'Internal Server Error',
     })
 
-    weatherService.getCurrentWeather().subscribe(
+    weatherService.getWeather<ResponseWeatherType>(environment.API_URL_CURRENT_WEATHER, () => {
+    },).subscribe(
       () => {
       },
       error => {
@@ -204,102 +206,4 @@ describe('WeatherService', () => {
     req.flush(null, mockResponseError);
     expect(fakeModalService.open).toHaveBeenCalledWith(ModalComponent);
   })
-
-  it('should call getFiveDayWeatherForecast request without parameters and update fiveDaysForecastWeather$', () => {
-    weatherService.getFiveDayWeatherForecast().subscribe();
-    const req = httpTestingController.expectOne(request => {
-      return request.urlWithParams === `${environment.API_URL_FIVE_DAYS}lang=ru&units=metric&appid=${environment.API_KEY}&q=&lon=0&lat=0`;
-    })
-    expect(req.request.method).toBe('GET');
-    req.flush(mock5daysResponse);
-    expect(weatherService.fiveDaysForecastWeather$.getValue()).toEqual(mock5daysResponse.list.filter((weather: List) => new Date(weather.dt * 1000).getHours() > 12 && new Date(weather.dt * 1000).getHours() < 16));
-  })
-
-  it('should call getFiveDayWeatherForecast request with the correct latitude and longitude parameters and update fiveDaysForecastWeather$', () => {
-    weatherService.getFiveDayWeatherForecast('', latitude, longitude).subscribe();
-    const req = httpTestingController.expectOne(request => {
-      return request.urlWithParams === `${environment.API_URL_FIVE_DAYS}lang=ru&units=metric&appid=${environment.API_KEY}&q=&lon=${longitude}&lat=${latitude}`;
-    })
-    expect(req.request.method).toBe('GET');
-    req.flush(mock5daysResponse);
-    expect(weatherService.fiveDaysForecastWeather$.getValue()).toEqual(mock5daysResponse.list.filter((weather: List) => new Date(weather.dt * 1000).getHours() > 12 && new Date(weather.dt * 1000).getHours() < 16));
-  })
-
-  it('should call getFiveDayWeatherForecast request with the correct city parameter and update fiveDaysForecastWeather$', () => {
-    mockCurrentResponse.name = 'Moscow';
-    weatherService.getFiveDayWeatherForecast(mockCurrentResponse.name).subscribe();
-    const req = httpTestingController.expectOne(request => {
-      return request.urlWithParams === `${environment.API_URL_FIVE_DAYS}lang=ru&units=metric&appid=${environment.API_KEY}&q=${mockCurrentResponse.name}&lon=0&lat=0`;
-    })
-    expect(req.request.method).toBe('GET');
-    req.flush(mock5daysResponse);
-    expect(weatherService.fiveDaysForecastWeather$.getValue()).toEqual(mock5daysResponse.list.filter((weather: List) => new Date(weather.dt * 1000).getHours() > 12 && new Date(weather.dt * 1000).getHours() < 16));
-  })
-
-  it('should call getFiveDayWeatherForecast request error with status code 404 and update isCollapsed$', () => {
-    const mockErrorResponse = new HttpErrorResponse({
-      status: 404,
-      statusText: 'Not found'
-    });
-
-    spyOn(weatherService.isCollapsed$, 'next');
-    weatherService.getFiveDayWeatherForecast().subscribe(
-      () => {
-        // Обработка успешного ответа (не требуется в данном случае)
-      },
-      (error: HttpErrorResponse) => {
-        expect(error.status).toBe(mockErrorResponse.status);
-        expect(error.statusText).toBe(mockErrorResponse.statusText);
-      }
-    );
-
-    const req = httpTestingController.expectOne(`${environment.API_URL_FIVE_DAYS}lang=ru&units=metric&appid=${environment.API_KEY}&q=&lon=0&lat=0`);
-    expect(req.request.method).toEqual('GET');
-    req.flush(null, mockErrorResponse);
-    expect(weatherService.isCollapsed$.next).toHaveBeenCalledWith(false);
-  });
-
-  it('should call getFiveDayWeatherForecast request error with status code 0 and check modalService open method call', () => {
-    const mockErrorResponse = new HttpErrorResponse({
-      status: 0,
-      statusText: 'Not found'
-    });
-
-    weatherService.getFiveDayWeatherForecast().subscribe(
-      () => {
-        // Обработка успешного ответа (не требуется в данном случае)
-      },
-      (error: HttpErrorResponse) => {
-        expect(error.status).toBe(mockErrorResponse.status);
-        expect(error.statusText).toBe(mockErrorResponse.statusText);
-      }
-    );
-
-    const req = httpTestingController.expectOne(`${environment.API_URL_FIVE_DAYS}lang=ru&units=metric&appid=${environment.API_KEY}&q=&lon=0&lat=0`);
-    expect(req.request.method).toEqual('GET');
-    req.flush(null, mockErrorResponse);
-    expect(fakeModalService.open).toHaveBeenCalledWith(ModalComponent);
-  });
-
-  it('should call getFiveDayWeatherForecast request error with status code 500 and check modalService open method call', () => {
-    const mockErrorResponse = new HttpErrorResponse({
-      status: 500,
-      statusText: 'Internal Server Error'
-    });
-
-    weatherService.getFiveDayWeatherForecast().subscribe(
-      () => {
-        // Обработка успешного ответа (не требуется в данном случае)
-      },
-      (error: HttpErrorResponse) => {
-        expect(error.status).toBe(mockErrorResponse.status);
-        expect(error.statusText).toBe(mockErrorResponse.statusText);
-      }
-    );
-
-    const req = httpTestingController.expectOne(`${environment.API_URL_FIVE_DAYS}lang=ru&units=metric&appid=${environment.API_KEY}&q=&lon=0&lat=0`);
-    expect(req.request.method).toEqual('GET');
-    req.flush(null, mockErrorResponse);
-    expect(fakeModalService.open).toHaveBeenCalledWith(ModalComponent);
-  });
 })

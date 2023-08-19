@@ -30,7 +30,7 @@ export class WeatherService {
     )
   }
 
-  public getCurrentWeather(city?: string, latitude?: number, longitude?: number): Observable<ResponseWeatherType> {
+  public getWeather<T>(url: string, callback: (result: T) => void, city?: string, latitude?: number, longitude?: number): Observable<T> {
     const params = {
       lang: 'ru',
       units: 'metric',
@@ -39,9 +39,11 @@ export class WeatherService {
       lon: 0,
       lat: 0
     }
+
     if (city) {
       params.q = city;
     }
+
     if (latitude && longitude) {
       params.lon = longitude;
       params.lat = latitude;
@@ -50,12 +52,9 @@ export class WeatherService {
       params.q = this.city$.getValue();
     }
 
-    return this.http.get<ResponseWeatherType>(environment.API_URL_CURRENT_WEATHER, {params})
-      .pipe(
-        tap((result: ResponseWeatherType) => {
-          if (result) {
-            this.currentWeather$.next(result);
-          }
+    return this.http.get<T>(url, {params}).pipe(
+        tap( (result: T) => {
+          callback(result);
         }),
         catchError( (error: HttpErrorResponse) => {
           if (error.status) {
@@ -73,50 +72,13 @@ export class WeatherService {
       );
   }
 
-  public getFiveDayWeatherForecast(city?: string, latitude?: number, longitude?: number): Observable<Response5DaysForecastType> {
-    const params = {
-      lang: 'ru',
-      units: 'metric',
-      appid: environment.API_KEY,
-      q: this.city$.getValue(),
-      lon: 0,
-      lat: 0
-    }
+  public filteringWeatherListForFiveDays(weatherForecast: Response5DaysForecastType): void {
+    this.fiveDaysForecastWeather$
+      .next(weatherForecast.list
+        .filter((weather: List) => new Date(weather.dt * 1000).getHours() > 12 && new Date(weather.dt * 1000).getHours() < 16))
+  }
 
-    if (city) {
-      params.q = city;
-    }
-
-    if (latitude && longitude) {
-      params.lon = longitude;
-      params.lat = latitude;
-    }
-    if (!city && !latitude && !longitude) {
-      params.q = this.city$.getValue();
-    }
-
-    return this.http.get<Response5DaysForecastType>(environment.API_URL_FIVE_DAYS, {params})
-      .pipe(
-        tap(weatherForecast => {
-          this.fiveDaysForecastWeather$
-            .next(weatherForecast.list
-              .filter((weather: List) => new Date(weather.dt * 1000).getHours() > 12 && new Date(weather.dt * 1000).getHours() < 16)
-            )
-        }),
-        catchError(error => {
-          switch (true) {
-            case (error.status === 0):
-              this.modalService.open(ModalComponent);
-              break;
-            case (error.status === 404):
-              this.isCollapsed$.next(false)
-              break;
-            case (error.status >= 500 && error.status <= 526):
-              this.modalService.open(ModalComponent);
-              break;
-          }
-          throw error;
-        })
-      );
+  public updateCurrentWeather(currentWeather: ResponseWeatherType): void {
+    this.currentWeather$.next(currentWeather);
   }
 }
