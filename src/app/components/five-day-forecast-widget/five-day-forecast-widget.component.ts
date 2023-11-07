@@ -1,8 +1,8 @@
 import {ChangeDetectionStrategy, Component, Input, ViewChild} from '@angular/core';
-import {List} from "../../types/response-five-days-forecast-weather.type";
 import {ChartComponent} from "ng-apexcharts";
 import {ChartOptions} from "../../types/chart-options.type";
 import {StyleForTime} from "../../services/time-color.service";
+import {WeatherType} from "../../types/weather.type";
 
 @Component({
   selector: 'app-five-day-forecast-widget',
@@ -12,7 +12,7 @@ import {StyleForTime} from "../../services/time-color.service";
 })
 export class FiveDayForecastWidgetComponent {
   @ViewChild("chart") chart: ChartComponent;
-  @Input() fiveDayForecastWeather: List[];
+  @Input() fiveDayForecastWeather: WeatherType;
   @Input() chartSeriesOptions: ChartOptions;
   @Input() styleForTime: StyleForTime;
 }

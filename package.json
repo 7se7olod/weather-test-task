@@ -8,7 +8,8 @@
     "deploy": "ng deploy --base-href=/weather-test-task/",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "explore": "source-map-explorer dist/**/*.js"
+    "explore": "source-map-explorer dist/**/*.js",
+    "lint": "ng lint"
   },
   "private": true,
   "dependencies": {
@@ -31,17 +32,19 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^15.2.2",
+    "@angular-eslint/builder": "15.2.1",
+    "@angular-eslint/eslint-plugin": "15.2.1",
+    "@angular-eslint/eslint-plugin-template": "15.2.1",
+    "@angular-eslint/schematics": "15.2.1",
+    "@angular-eslint/template-parser": "15.2.1",
     "@angular/cli": "~15.2.2",
     "@angular/compiler-cli": "^15.2.0",
     "@angular/localize": "^15.2.0",
     "@types/jasmine": "~4.3.0",
+    "@typescript-eslint/eslint-plugin": "5.48.2",
+    "@typescript-eslint/parser": "5.48.2",
     "angular-cli-ghpages": "^1.0.7",
-    "jasmine-core": "~4.5.0",
-    "karma": "~6.4.0",
-    "karma-chrome-launcher": "~3.1.0",
-    "karma-coverage": "~2.2.0",
-    "karma-jasmine": "~5.1.0",
-    "karma-jasmine-html-reporter": "~2.0.0",
+    "eslint": "^8.33.0",
     "source-map-explorer": "^2.5.3",
     "typescript": "~4.9.4"
   }

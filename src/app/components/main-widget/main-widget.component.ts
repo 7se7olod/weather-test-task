@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {ResponseWeatherType} from "../../types/response-weather.type";
 import {StyleForTime} from "../../services/time-color.service";
+import {WeatherType} from "../../types/weather.type";
 
 @Component({
   selector: 'app-main-widget',
@@ -9,7 +9,6 @@ import {StyleForTime} from "../../services/time-color.service";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MainWidgetComponent {
-  @Input() currentWeather: ResponseWeatherType;
+  @Input() currentWeather: WeatherType;
   @Input() styleForTime: StyleForTime;
-  constructor() {}
 }

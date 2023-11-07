@@ -1,18 +1,18 @@
 import { Injectable } from '@angular/core';
-import {map, Observable} from "rxjs";
-import {WeatherService} from "./weather.service";
+import {Observable, of} from "rxjs";
 import {ChartOptions} from "../types/chart-options.type";
+import {WeatherType} from "../types/weather.type";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChartService {
-  chartOptions$: Observable<ChartOptions> = this.weatherService.fiveDaysForecastWeather$.pipe(map((weatherList) => {
-    return {
+  getChartOptions(weather: WeatherType): Observable<ChartOptions> {
+    return of({
       series: [
         {
           name: "Температура ºC",
-          data: (weatherList || []).map(weatherItem => Math.round(weatherItem.main.temp)),
+          data: weather.list.map(weatherItem => Math.round(weatherItem.main.temp)),
         }
       ],
       chart: {
@@ -23,13 +23,11 @@ export class ChartService {
         text: "График погоды",
       },
       xaxis: {
-        categories: (weatherList || []).map(weatherItem => `${new Date(weatherItem.dt * 1000).toLocaleString('ru-RU', {
+        categories: weather.list.map(weatherItem => `${new Date(weatherItem.dt * 1000).toLocaleString('ru-RU', {
           day: 'numeric',
           month: 'long'
         })}`)
       }
-    }
-  }));
-
-  constructor(private readonly weatherService: WeatherService,) { }
+    });
+  }
 }

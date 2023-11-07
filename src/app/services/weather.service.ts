@@ -1,19 +1,19 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {BehaviorSubject, catchError, Observable, switchMap, take, tap} from "rxjs";
+import {BehaviorSubject, catchError, combineLatest, map, Observable, switchMap, take, tap} from "rxjs";
 import {ResponseWeatherType} from "../types/response-weather.type";
 import {List, Response5DaysForecastType} from "../types/response-five-days-forecast-weather.type";
 import {environment} from "../../environments/environment";
 import {ModalComponent} from "../components/modal/modal.component";
+import {WeatherType} from "../types/weather.type";
 
 @Injectable({
   providedIn: 'root'
 })
 export class WeatherService {
-  public currentWeather$ = new BehaviorSubject<ResponseWeatherType | null>(null);
-  public fiveDaysForecastWeather$ = new BehaviorSubject<List[] | null>(null);
-  public isCollapsed$ = new BehaviorSubject<boolean>(true);
+  weather$ = new BehaviorSubject<WeatherType | null>(null);
+  isCollapsed$ = new BehaviorSubject<boolean>(true);
   private city$ = new BehaviorSubject<string>('');
 
   constructor(
@@ -34,7 +34,7 @@ export class WeatherService {
     )
   }
 
-  public getWeather<T>(url: string, callback: (result: T) => void, city?: string, latitude?: number, longitude?: number): Observable<T> {
+  getWeatherTEST(city?: string, longitude?: number, latitude?: number): Observable<WeatherType> {
     const params = {
       lang: 'ru',
       units: 'metric',
@@ -56,9 +56,23 @@ export class WeatherService {
       params.q = this.city$.getValue();
     }
 
-    return this.http.get<T>(url, {params}).pipe(
-      tap((result: T) => {
-        callback(result);
+    return combineLatest([
+      this.http.get<ResponseWeatherType>(environment.API_URL_CURRENT_WEATHER, {params}),
+      this.http.get<Response5DaysForecastType>(environment.API_URL_FIVE_DAYS, {params})
+    ]).pipe(
+      map(([weather, fiveWeather]) => {
+        const res = {
+          cod: fiveWeather.cod,
+          message: fiveWeather.message,
+          list: fiveWeather.list.filter((weather: List) => new Date(weather.dt * 1000).getHours() > 12 && new Date(weather.dt * 1000).getHours() < 16),
+        }
+        return {
+          ...weather,
+          ...res
+        } as WeatherType
+      }),
+      tap(weather => {
+        this.weather$.next(weather);
       }),
       take(1),
       catchError((error: HttpErrorResponse) => {
@@ -74,16 +88,6 @@ export class WeatherService {
         }
         throw error;
       })
-    );
-  }
-
-  public filteringWeatherListForFiveDays(weatherForecast: Response5DaysForecastType): void {
-    this.fiveDaysForecastWeather$
-      .next(weatherForecast.list
-        .filter((weather: List) => new Date(weather.dt * 1000).getHours() > 12 && new Date(weather.dt * 1000).getHours() < 16))
-  }
-
-  public updateCurrentWeather(currentWeather: ResponseWeatherType): void {
-    this.currentWeather$.next(currentWeather);
+    )
   }
 }

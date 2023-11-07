@@ -22,7 +22,7 @@
       </tr>
       </thead>
       <tbody class="align-middle">
-      <tr *ngFor="let weatherItem of fiveDayForecastWeather" class="text-center">
+      <tr *ngFor="let weatherItem of fiveDayForecastWeather.list" class="text-center">
         <td>
           <div>
             <div>{{ (weatherItem.dt * 1000) | date : 'dd MMMM' }}</div>

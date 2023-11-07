@@ -7,7 +7,6 @@ export type StyleForTime = { backgroundCard: string, backgroundMain: string, fon
 })
 export class TimeColorService {
   private styleForTime: StyleForTime = { backgroundCard: '#00c6ff', backgroundMain: 'white', fontColor: 'black', filter: 'none' };
-  constructor() { }
 
   public getStylesForTime(timezone: number): StyleForTime {
     const currentHour = new Date().getUTCHours() + (timezone / 3600);
