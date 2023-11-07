@@ -51,8 +51,8 @@ describe('HeaderComponent', () => {
   });
 
   it('должен проверить isError на существование и на false', () => {
-    expect(headerComponent.isError).toBeDefined();
-    expect(headerComponent.isError).toBeFalsy();
+    expect(headerComponent.isError$).toBeDefined();
+    expect(headerComponent.isError$).toBeFalsy();
   });
 
   it('должен вызывать функцию searchCity с корректным аргументом при клике на кнопку',  () => {
@@ -69,9 +69,9 @@ describe('HeaderComponent', () => {
   describe('searchCity', () => {
     it('должен проверять isError при передаче некорректного значения', fakeAsync(() => {
       headerComponent.searchCity('12');
-      expect(headerComponent.isError).toBe(true);
+      expect(headerComponent.isError$).toBe(true);
       tick(3000);
-      expect(headerComponent.isError).toBe(false);
+      expect(headerComponent.isError$).toBe(false);
     }));
 
     it('должна проверять weatherCity при валидном значении формы', () => {

@@ -1,11 +1,11 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpErrorResponse} from "@angular/common/http";
-import {BehaviorSubject, catchError, Observable, switchMap, tap} from "rxjs";
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {BehaviorSubject, catchError, Observable, switchMap, take, tap} from "rxjs";
 import {ResponseWeatherType} from "../types/response-weather.type";
 import {List, Response5DaysForecastType} from "../types/response-five-days-forecast-weather.type";
 import {environment} from "../../environments/environment";
 import {ModalComponent} from "../components/modal/modal.component";
-import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 
 @Injectable({
   providedIn: 'root'
@@ -16,8 +16,11 @@ export class WeatherService {
   public isCollapsed$ = new BehaviorSubject<boolean>(true);
   private city$ = new BehaviorSubject<string>('');
 
-  constructor(private http: HttpClient,
-              private modalService: NgbModal) {}
+  constructor(
+    private readonly http: HttpClient,
+    private readonly modalService: NgbModal,
+  ) {
+  }
 
   public getCityFromIp(): Observable<{ city: string }> {
     return this.http.get<{ ip: string }>('https://api.ipify.org/?format=json').pipe(
@@ -26,7 +29,8 @@ export class WeatherService {
       ),
       tap((response) => {
         this.city$.next(response.city);
-      })
+      }),
+      take(1),
     )
   }
 
@@ -53,23 +57,24 @@ export class WeatherService {
     }
 
     return this.http.get<T>(url, {params}).pipe(
-        tap( (result: T) => {
-          callback(result);
-        }),
-        catchError( (error: HttpErrorResponse) => {
-          if (error.status) {
-            switch (true) {
-              case (error.status === 404):
-                this.isCollapsed$.next(false);
-                break;
-              case (error.status >= 500 && error.status <= 526):
-                this.modalService.open(ModalComponent);
-                break;
-            }
+      tap((result: T) => {
+        callback(result);
+      }),
+      take(1),
+      catchError((error: HttpErrorResponse) => {
+        if (error.status) {
+          switch (true) {
+            case (error.status === 404):
+              this.isCollapsed$.next(false);
+              break;
+            case (error.status >= 500 && error.status <= 526):
+              this.modalService.open(ModalComponent);
+              break;
           }
-          throw error;
-        })
-      );
+        }
+        throw error;
+      })
+    );
   }
 
   public filteringWeatherListForFiveDays(weatherForecast: Response5DaysForecastType): void {

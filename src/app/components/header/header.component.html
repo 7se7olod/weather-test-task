@@ -8,16 +8,17 @@
                  class="form-input rounded-3 w-100 border-0 h-100 p-2"
                  type="text"
                  placeholder="Город" (keyup.enter)="searchCity(cityInputElement.value)" #cityInputElement>
-          <div class="position-absolute bottom-0 top-100 w-100">
+          <div class="position-absolute bottom-0 top-100 w-100 mt-2">
             <div #collapse="ngbCollapse" [(ngbCollapse)]="!isError" [horizontal]="false">
-              <div class="card position-relative">
-                <button type="button" class="btn-close align-self-end p-2 position-absolute" (click)="collapse.toggle()"></button>
-                <div class="card-body text-danger fs-6 text-center">Город не найден!</div>
+              <div class="card position-relative rounded-3 bg-danger">
+                <button type="button" class="btn-close align-self-end m-1 position-absolute"
+                        (click)="collapse.toggle()"></button>
+                <div class="card-body text-white fs-6 text-center">Город не найден!</div>
               </div>
             </div>
           </div>
         </div>
-        <button class="form-button btn btn-primary" type="button" (click)="searchCity(cityInputElement.value)">
+        <button class="form-button btn btn-outline-light" type="button" (click)="searchCity(cityInputElement.value)">
           Найти
         </button>
       </form>

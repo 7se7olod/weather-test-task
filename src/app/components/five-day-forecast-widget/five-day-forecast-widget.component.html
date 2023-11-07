@@ -1,9 +1,9 @@
-<div class="w-100 p-4 p2 d-flex flex-column justify-content-center align-items-center">
+<div class="w-100 p-2 d-flex flex-column justify-content-center align-items-center">
   <div
     [ngStyle]="{ 'background': styleForTime.backgroundCard }"
-    class="five-day-card w-50 w-auto rounded-4 p-4" *ngIf="fiveDayForecastWeather">
-    <table class="w-auto table" [ngStyle]="{'color': styleForTime.fontColor}">
-      <thead class="w-50">
+    class="five-day-card rounded-4 p-4" *ngIf="fiveDayForecastWeather">
+    <table class="table" [ngStyle]="{'color': styleForTime.fontColor}">
+      <thead>
       <tr class="text-center">
         <th scope="col"></th>
         <th scope="col"></th>
@@ -21,18 +21,18 @@
         </th>
       </tr>
       </thead>
-      <tbody class="align-middle  w-auto">
+      <tbody class="align-middle">
       <tr *ngFor="let weatherItem of fiveDayForecastWeather" class="text-center">
-        <td style="max-width: 80px;">
-          <div class="d-flex flex-column justify-content-start align-items-center">
-            <span>{{ (weatherItem.dt * 1000) | date : 'dd MMMM' }}</span>
-            <span>{{ (weatherItem.dt * 1000) | date : 'EE' }}</span>
+        <td>
+          <div>
+            <div>{{ (weatherItem.dt * 1000) | date : 'dd MMMM' }}</div>
+            <div>{{ (weatherItem.dt * 1000) | date : 'EE' }}</div>
           </div>
         </td>
-        <td style="max-width: 80px" class="d-flex flex-column justify-content-center align-items-center">
-          <img class="w-auto mh-100" src="https://openweathermap.org/img/wn/{{weatherItem.weather[0].icon}}@2x.png"
+        <td>
+          <img class="w-100" src="https://openweathermap.org/img/wn/{{weatherItem.weather[0].icon}}@2x.png"
                alt="{{weatherItem.weather[0].icon}}">
-          <span class="weather-description-text">{{weatherItem.weather[0].description}}</span>
+          <div class="weather-description-text">{{weatherItem.weather[0].description}}</div>
         </td>
         <td>
           {{ weatherItem.main.temp | roundedTemperature }}
@@ -49,7 +49,7 @@
       </tr>
       </tbody>
     </table>
-    <div class="text-center w-100 w-auto">
+    <div class="text-center">
       <apx-chart
         [series]="chartSeriesOptions.series"
         [chart]="chartSeriesOptions.chart"

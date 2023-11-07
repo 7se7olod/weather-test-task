@@ -8,6 +8,7 @@ import {environment} from "../../environments/environment";
 import {ModalComponent} from "../components/modal/modal.component";
 import {HttpErrorResponse} from "@angular/common/http";
 import {Response5DaysForecastType} from "../types/response-five-days-forecast-weather.type";
+import any = jasmine.any;
 
 describe('WeatherService', () => {
   let weatherService: WeatherService;
@@ -21,7 +22,7 @@ describe('WeatherService', () => {
   let longitude: number;
 
   beforeEach(() => {
-    mockCurrentResponse = {
+    let mockCurrentResponse = {
       weather: [{
         id: 1,
         main: '1',
@@ -44,6 +45,7 @@ describe('WeatherService', () => {
       name: '',
       cod: 1,
       dt: 1,
+      timezone: 1,
     };
     mock5daysResponse = {
       cod: '200',

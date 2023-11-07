@@ -1,9 +1,15 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {FormBuilder, Validators} from "@angular/forms";
+import {BehaviorSubject} from "rxjs";
 
 @Component({
   selector: 'app-header',
   templateUrl: 'header.component.html',
+  styles: [`
+    header {
+      box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.75);
+    }
+  `],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderComponent {
@@ -17,14 +23,14 @@ export class HeaderComponent {
   }
 
   public searchCity(city: string): void {
-    if (city.trim()) {
+    if (city) {
       if (this.cityForm.valid) {
         this.weatherCity.emit(city);
       } else {
         this.isError = true;
         setTimeout(() => {
           this.isError = false;
-        }, 3000)
+        }, 1500)
       }
     }
   }
