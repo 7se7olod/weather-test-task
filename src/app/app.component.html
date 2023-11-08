@@ -1,15 +1,19 @@
-<div [ngStyle]="{'background': styleColorTime.backgroundMain}">
-  <app-header (weatherCity)="searchCityWeather($event)" [isError]="isError$ | async"></app-header>
+<div [ngStyle]="{ background: styleColorTime.backgroundMain }">
+  <app-header
+    [isError]="isError$ | async"
+    (weatherCity)="searchCityWeather($event)"
+  ></app-header>
   <app-main-widget
     [currentWeather]="weather$ | async"
+    [timezone]="weather$.getValue().timezone"
     [styleForTime]="styleColorTime"
   ></app-main-widget>
   <app-five-day-forecast-widget
     *ngIf="chartOptions$ | async as options"
     [fiveDayForecastWeather]="weather$ | async"
     [chartSeriesOptions]="options"
-    [styleForTime]="styleColorTime">
+    [styleForTime]="styleColorTime"
+  >
   </app-five-day-forecast-widget>
   <app-footer></app-footer>
 </div>
-

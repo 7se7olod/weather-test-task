@@ -1,7 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'roundedTemperature'
+  name: 'roundedTemperature',
 })
 export class TemperatureFormattingPipe implements PipeTransform {
   transform(temperature: number): string {

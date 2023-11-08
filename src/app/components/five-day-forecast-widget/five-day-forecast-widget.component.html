@@ -1,55 +1,83 @@
-<div class="w-100 p-2 d-flex flex-column justify-content-center align-items-center">
+<div
+  class="w-100 p-2 d-flex flex-column justify-content-center align-items-center"
+>
   <div
-    [ngStyle]="{ 'background': styleForTime.backgroundCard }"
-    class="five-day-card rounded-4 p-4" *ngIf="fiveDayForecastWeather">
-    <table class="table" [ngStyle]="{'color': styleForTime.fontColor}">
+    class="five-day-card rounded-4 p-4"
+    *ngIf="fiveDayForecastWeather"
+    [ngStyle]="{ background: styleForTime.backgroundCard }"
+  >
+    <table [ngStyle]="{ color: styleForTime.fontColor }">
       <thead>
-      <tr class="text-center">
-        <th scope="col"></th>
-        <th scope="col"></th>
-        <th scope="col" title="Температура">
-          <img [ngStyle]="{'filter': styleForTime.filter}" style="width: 20px" src="./assets/images/temperature-icon.svg" alt="temperature-icon">
-        </th>
-        <th scope="col" title="Скорость ветра">
-          <img [ngStyle]="{'filter': styleForTime.filter}" style="width: 20px" src="./assets/images/wind-icon.svg" alt="wind-icon">
-        </th>
-        <th scope="col" title="Влажность воздуха">
-          <img [ngStyle]="{'filter': styleForTime.filter}" style="width: 20px" src="./assets/images/humidity-icon.svg" alt="humidity-icon">
-        </th>
-        <th scope="col" title="Атмосферное давление">
-          <img [ngStyle]="{'filter': styleForTime.filter}" style="width: 20px" src="./assets/images/pressure-icon.svg" alt="pressure-icon">
-        </th>
-      </tr>
+        <tr class="text-center">
+          <th scope="col"></th>
+          <th scope="col"></th>
+          <th scope="col" title="Температура">
+            <img
+              [ngStyle]="{ filter: styleForTime.filter }"
+              style="width: 20px"
+              src="./assets/images/temperature-icon.svg"
+              alt="temperature-icon"
+            />
+          </th>
+          <th scope="col" title="Скорость ветра">
+            <img
+              [ngStyle]="{ filter: styleForTime.filter }"
+              style="width: 20px"
+              src="./assets/images/wind-icon.svg"
+              alt="wind-icon"
+            />
+          </th>
+          <th scope="col" title="Влажность воздуха">
+            <img
+              [ngStyle]="{ filter: styleForTime.filter }"
+              style="width: 20px"
+              src="./assets/images/humidity-icon.svg"
+              alt="humidity-icon"
+            />
+          </th>
+          <th scope="col" title="Атмосферное давление">
+            <img
+              [ngStyle]="{ filter: styleForTime.filter }"
+              style="width: 20px"
+              src="./assets/images/pressure-icon.svg"
+              alt="pressure-icon"
+            />
+          </th>
+        </tr>
       </thead>
       <tbody class="align-middle">
-      <tr *ngFor="let weatherItem of fiveDayForecastWeather.list" class="text-center">
-        <td>
-          <div>
-            <div>{{ (weatherItem.dt * 1000) | date : 'dd MMMM' }}</div>
-            <div>{{ (weatherItem.dt * 1000) | date : 'EE' }}</div>
-          </div>
-        </td>
-        <td>
-          <img class="w-100" src="https://openweathermap.org/img/wn/{{weatherItem.weather[0].icon}}@2x.png"
-               alt="{{weatherItem.weather[0].icon}}">
-          <div class="weather-description-text">{{weatherItem.weather[0].description}}</div>
-        </td>
-        <td>
-          {{ weatherItem.main.temp | roundedTemperature }}
-        </td>
-        <td>
-          {{weatherItem.wind.speed}} м/с
-        </td>
-        <td>
-          {{weatherItem.main.humidity}}%
-        </td>
-        <td>
-          {{weatherItem.main.pressure}} мм рт. ст.
-        </td>
-      </tr>
+        <tr
+          class="text-center"
+          *ngFor="let weatherItem of fiveDayForecastWeather.list"
+        >
+          <td>
+            <div>
+              <div>{{ weatherItem.dt * 1000 | date : 'dd MMMM' }}</div>
+              <div>{{ weatherItem.dt * 1000 | date : 'EE' }}</div>
+            </div>
+          </td>
+          <td>
+            <img
+              class="w-100"
+              src="https://openweathermap.org/img/wn/{{
+                weatherItem.weather[0].icon
+              }}@2x.png"
+              alt="{{ weatherItem.weather[0].icon }}"
+            />
+            <div class="weather-description-text">{{
+              weatherItem.weather[0].description
+            }}</div>
+          </td>
+          <td class="p-2">
+            {{ weatherItem.main.temp | roundedTemperature }}
+          </td>
+          <td class="p-2"> {{ weatherItem.wind.speed }} м/с </td>
+          <td class="p-2"> {{ weatherItem.main.humidity }}% </td>
+          <td class="p-2"> {{ weatherItem.main.pressure }} мм рт. ст. </td>
+        </tr>
       </tbody>
     </table>
-    <div class="text-center">
+    <div class="text-center my-4">
       <apx-chart
         [series]="chartSeriesOptions.series"
         [chart]="chartSeriesOptions.chart"
