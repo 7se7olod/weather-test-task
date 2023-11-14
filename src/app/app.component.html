@@ -3,17 +3,32 @@
     [isError]="isError$ | async"
     (weatherCity)="searchCityWeather($event)"
   ></app-header>
-  <app-main-widget
-    [currentWeather]="weather$ | async"
-    [timezone]="weather$.getValue().timezone"
-    [styleForTime]="styleColorTime"
-  ></app-main-widget>
-  <app-five-day-forecast-widget
-    *ngIf="chartOptions$ | async as options"
-    [fiveDayForecastWeather]="weather$ | async"
-    [chartSeriesOptions]="options"
-    [styleForTime]="styleColorTime"
-  >
-  </app-five-day-forecast-widget>
+
+  <ng-container *ngIf="weather$ | async as weather; else loading">
+    <app-main-widget
+      [currentWeather]="weather"
+      [timezone]="weather.timezone"
+      [styleForTime]="styleColorTime"
+    ></app-main-widget>
+
+    <app-five-day-forecast-widget
+      *ngIf="chartOptions$ | async as options"
+      [fiveDayForecastWeather]="weather"
+      [chartSeriesOptions]="options"
+      [styleForTime]="styleColorTime"
+    >
+    </app-five-day-forecast-widget>
+  </ng-container>
+
+  <ng-template #loading>
+    <div
+      class="text-center vh-100 d-flex align-items-center justify-content-center"
+    >
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  </ng-template>
+
   <app-footer></app-footer>
 </div>

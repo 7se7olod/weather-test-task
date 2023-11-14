@@ -1,6 +1,13 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { WeatherService } from './services/weather.service';
-import { BehaviorSubject, catchError, of, switchMap, take, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  switchMap,
+  take,
+  tap,
+  throwError,
+} from 'rxjs';
 import { ChartOptions } from './types/chart-options.type';
 import { TimeColorService } from './services/time-color.service';
 import { ChartService } from './services/chart.service';
@@ -30,15 +37,15 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.getCurrentPosition();
+  }
+
+  private getCurrentPosition(): void {
     navigator.geolocation.getCurrentPosition(
       (position: GeolocationPosition) => {
         if (position.coords) {
           this.weatherService
-            .getWeatherTEST(
-              '',
-              position.coords.longitude,
-              position.coords.latitude
-            )
+            .getWeather('', position.coords.longitude, position.coords.latitude)
             .pipe(
               tap((weather) => {
                 this.styleColorTime = this.timeColorService.getStylesForTime(
@@ -59,7 +66,7 @@ export class AppComponent implements OnInit {
         this.weatherService
           .getCityFromIp()
           .pipe(
-            switchMap((city) => this.weatherService.getWeatherTEST(city.city)),
+            switchMap((city) => this.weatherService.getWeather(city.city)),
             tap((weather) => {
               this.styleColorTime = this.timeColorService.getStylesForTime(
                 weather.timezone
@@ -77,10 +84,10 @@ export class AppComponent implements OnInit {
     );
   }
 
-  public searchCityWeather(city: string): void {
+  searchCityWeather(city: string): void {
     if (city) {
       this.weatherService
-        .getWeatherTEST(city)
+        .getWeather(city)
         .pipe(
           tap(
             (weather) =>
@@ -90,12 +97,12 @@ export class AppComponent implements OnInit {
           ),
           switchMap((weather) => this.chartService.getChartOptions(weather)),
           take(1),
-          catchError(() => {
+          catchError((error) => {
             this.isError$.next(true);
             setTimeout(() => {
               this.isError$.next(false);
-            }, 3000);
-            return of(null);
+            }, 1000);
+            return throwError(error.error.message);
           })
         )
         .subscribe();

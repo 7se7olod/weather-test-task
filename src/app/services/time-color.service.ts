@@ -18,7 +18,7 @@ export class TimeColorService {
     filter: 'none',
   };
 
-  public getStylesForTime(timezone: number): StyleForTime {
+  getStylesForTime(timezone: number): StyleForTime {
     const currentHour = new Date().getUTCHours() + timezone / 3600;
     switch (true) {
       case currentHour >= 4 && currentHour < 6:

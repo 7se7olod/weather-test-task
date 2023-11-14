@@ -23,6 +23,10 @@ export class MainWidgetComponent implements OnInit {
   constructor(private readonly cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
+    this.updateCurrentTime();
+  }
+
+  private updateCurrentTime(): void {
     setInterval(() => {
       if (this.timezone !== undefined) {
         const timezoneOffsetMilliseconds = this.timezone * 1000;

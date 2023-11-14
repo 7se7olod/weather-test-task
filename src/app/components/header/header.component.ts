@@ -22,7 +22,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 export class HeaderComponent {
   @Output() weatherCity = new EventEmitter<string>();
   @Input() isError = false;
-  public cityForm = this.fb.group({
+  cityForm = this.fb.group({
     city: [
       '',
       [
@@ -36,16 +36,7 @@ export class HeaderComponent {
 
   constructor(private fb: FormBuilder) {}
 
-  public searchCity(city: string): void {
-    if (city) {
-      if (this.cityForm.valid) {
-        this.weatherCity.emit(city);
-      } else {
-        this.isError = true;
-        setTimeout(() => {
-          this.isError = false;
-        }, 1500);
-      }
-    }
+  searchCity(city: string): void {
+    this.weatherCity.emit(city);
   }
 }

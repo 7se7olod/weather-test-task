@@ -33,7 +33,7 @@ export class WeatherService {
     private readonly modalService: NgbModal
   ) {}
 
-  public getCityFromIp(): Observable<{ city: string }> {
+  getCityFromIp(): Observable<{ city: string }> {
     return this.http
       .get<{ ip: string }>('https://api.ipify.org/?format=json')
       .pipe(
@@ -49,7 +49,7 @@ export class WeatherService {
       );
   }
 
-  getWeatherTEST(
+  getWeather(
     city?: string,
     longitude?: number,
     latitude?: number

@@ -3,11 +3,6 @@
   [ngStyle]="{ color: styleForTime.fontColor }"
 >
   <div
-    class="spinner-border text-primary"
-    *ngIf="!currentWeather"
-    role="status"
-  ></div>
-  <div
     class="main-widget rounded-4 my-3 p-4"
     *ngIf="currentWeather"
     [ngStyle]="{ background: styleForTime.backgroundCard }"
